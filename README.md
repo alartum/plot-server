@@ -3,16 +3,8 @@ A Flask application that provides plot viewing in web browser and API for data u
 
 ## Building
 
-NodeJS npm can be installed on top of Python virtualenv with:
+Initial setup can be done by:
 
-'''
-pip install nodeenv
-nodeenv -p
-'''
-
-Packages can be further installed with:
-
-'''
-npm install -g <pkg-name> 
-'''
-
+```shell
+/bin/bash init.sh
+```
