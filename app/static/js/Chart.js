@@ -1,1 +1,0 @@
-../../../venv/lib/node_modules/chart.js/dist/Chart.js
