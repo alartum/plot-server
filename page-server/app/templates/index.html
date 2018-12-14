@@ -3,75 +3,80 @@
 {% block content %}
     <script src="static/js/Chart.js"></script>
     <script>
+    
     function show_hide(evt){
         const filesList = evt.currentTarget.nextElementSibling;
-        
+        const projName = evt.currentTarget.innerHTML;
+        const url = location.origin + "/list-files/" + projName;
+
         if (filesList.className.indexOf("w3-show") == -1){
+            fetch(url)
+            .then((resp) => resp.json())
+            .then(function(files) {
+                while (filesList.firstChild) {
+                    filesList.removeChild(filesList.firstChild);
+                }
+                return files.map(function(file) {
+                    const subdir = document.createElement('div'),
+                        name   = document.createTextNode(file);
+                    subdir.className = "subdir";
+                    subdir.appendChild(name);
+                    subdir.addEventListener('click', () => add_plot(projName, file));
+                    filesList.appendChild(subdir);
+                })
+            })
+            .catch(function(error) {
+                console.log(error);
+            });   
             filesList.className += " w3-show";
         } else {
             filesList.className = filesList.className.replace(" w3-show", "");
-        }
-        // load_icon = document.createElement('img');
-        // load_icon.src = "static/img/load.gif";
-        // load_icon.height = 30;
-        // load_icon.width = 30;
-        // filesList.appendChild(load_icon);
 
-        projName = evt.currentTarget.innerHTML;
-        const url = location.origin + "/list-files/" + projName;
-        
-        fetch(url)
-        .then((resp) => resp.json())
-        .then(function(files) {
-            while (filesList.firstChild) {
-                filesList.removeChild(filesList.firstChild);
-            }
-            return files.map(function(file) {
-                let subdir = document.createElement('div'),
-                    name   = document.createTextNode(file);
-                subdir.className = "subdir";
-                subdir.appendChild(name);
-                filesList.appendChild(subdir);
-            })
-        })
-        .catch(function(error) {
-            console.log(error);
-        });   
+            // load_icon = document.createElement('img');
+            // load_icon.src = "static/img/load.gif";
+            // load_icon.height = 30;
+            // load_icon.width = 30;
+            // filesList.appendChild(load_icon);
+        }
+      
     }
-    function del_card(evt, close, card){
+    function del_card(close, card){
         close.removeEventListener('click', del_card);
         card.parentNode.removeChild(card);   
     }
+    function add_plot(projName, file){
+
+    }
     </script>
     <div class="w3-cell-row">
-        <div class="w3-cell w3-card w3-quarter">
+        <div class="project-selector">
             <header class="w3-container"><h6><b>PROJECTS</b></h6></header>
             {% for project in projects %}
-            <button class="proj-expand w3-light-grey w3-block w3-button">{{ project["name"] }}</button>
+            <button class="proj-expand">{{ project["name"] }}</button>
             <div class="w3-container w3-hide">
             </div>
             {% endfor %}
         </div>
         
-        <div class="w3-container w3-cell w3-threequarter">
-            <div class="plot-card w3-margin w3-card">
-            <div class="w3-light-grey w3-panel plot-panel"><div class="w3-right w3-button close-button">X</div></div>
+        <div class="plot-display">
+            <div class="plot-card">
+            <div class="plot-panel"><div class="close-button">X</div></div>
             <canvas id="myChart" max-width="100" max-height="100"></canvas>
             </div>
         </div>
     </div>
+
     <script src="static/js/plot.js"></script>
     <script>
-    var cards = document.getElementsByClassName("plot-card");
-    for (var i = 0; i < cards.length; i++){
-        card = cards[i];
-        let close = card.getElementsByClassName("close-button")[0];
-        close.addEventListener('click', (evt) => del_card(evt, close, card));
+    const cards = document.querySelectorAll(".plot-card");
+    for (const card of cards){
+        const close = card.querySelector(".close-button");
+        close.addEventListener('click', () => del_card(close, card));
     }
 
-    const els = document.getElementsByClassName("proj-expand");
-    for (var i = 0; i < els.length; i++){
-        els[i].addEventListener('click', show_hide);
+    const els = document.querySelectorAll(".proj-expand");
+    for (const el of els){
+        el.addEventListener('click', show_hide);
     }
     </script>
 {% endblock %}

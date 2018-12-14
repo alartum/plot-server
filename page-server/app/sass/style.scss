@@ -1,0 +1,51 @@
+@import "_w3";
+
+.subdir {
+  @extend .w3-button;
+  @extend .w3-block;
+  @extend .w3-hover-sand;
+  @extend .w3-round-large;
+
+  padding:4px 16px 4px 6px;
+  text-align:left;
+}
+
+.project-selector {
+  @extend .w3-cell;
+  @extend .w3-card;
+  @extend .w3-quarter;
+}
+
+.plot-card {
+  @extend .w3-margin;
+  @extend .w3-card;
+}
+
+.plot-panel {
+  @extend .w3-light-grey;
+  @extend .w3-panel;
+
+  padding:2px 2px 2px 2px;
+}
+
+.proj-expand {
+  @extend .w3-light-grey;
+  @extend .w3-block;
+  @extend .w3-button;
+
+  padding:4px 16px 4px 6px;
+  text-align:left;
+}
+
+.close-button {
+  @extend .w3-right;
+  @extend .w3-button; 
+
+  padding:2px 8px 2px 8px;
+}
+
+.plot-display {
+  @extend .w3-container;
+  @extend .w3-cell;
+  @extend .w3-threequarter;
+}
