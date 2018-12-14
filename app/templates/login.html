@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="w3-container w3-third w3-margin-top">
+    <form class="w3-container w3-card-4" action="" method="post">
+        {{ form.hidden_tag() }}
+            <p>
+            {{ form.username.label }}
+            {{ form.username(size=32, class_="w3-input", style="width:90%") }}
+            {% if form.username.errors %}
+            <ul class="w3-ul w3-pale-yellow w3-margin-left" style="width:80%">{% for error in form.username.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+            <p>
+        <p>
+            {{ form.password.label}}
+            {{ form.password(size=32, class_="w3-input", style="width:90%") }}
+            <p>
+            {% if form.password.errors %}
+            <ul class="w3-ul w3-pale-yellow w3-margin-left" style="width:80%">{% for error in form.password.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+        </p>
+        <p>{{ form.remember_me(class_="w3-check") }} {{ form.remember_me.label }}</p>
+        <p>{{ form.submit(class_="w3-button w3-section w3-blue-grey w3-ripple") }}</p>
+    </form>
+    <p>New User? <a href="{{ url_for('register') }}">Click to Register!</a></p>
+    </div>
+{% endblock %}

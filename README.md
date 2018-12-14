@@ -8,3 +8,10 @@ Initial setup can be done by:
 ```shell
 /bin/bash init.sh
 ```
+
+## Dependencies
+
+direnv
+postgres
+nginx
+pip3

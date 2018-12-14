@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %} 
+    <div class="w3-container w3-third w3-margin-top">
+    <h1>Register</h1>
+    <form class="w3-container w3-card-4" action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.username.label }}<br>
+            {{ form.username(size=32, class_="w3-input", style="width:90%")}}<br>
+            {% if form.username.errors %}
+            <ul class="w3-ul w3-pale-yellow w3-margin-left" style="width:80%">{% for error in form.username.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+        </p>
+        <p>
+            {{ form.email.label }}<br>
+            {{ form.email(size=64, class_="w3-input", style="width:90%") }}<br>
+            {% if form.email.errors %}
+            <ul class="w3-ul w3-pale-yellow w3-margin-left" style="width:80%">{% for error in form.email.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+        </p>
+        <p>
+            {{ form.password.label }}<br>
+            {{ form.password(size=32, class_="w3-input", style="width:90%")}}<br>
+            {% if form.password.errors %}
+            <ul class="w3-ul w3-pale-yellow w3-margin-left" style="width:80%">{% for error in form.password.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+        </p>
+        <p>
+            {{ form.password2.label }}<br>
+            {{ form.password2(size=32, class_="w3-input", style="width:90%")}}<br>
+            {% if form.password2.errors %}
+            <ul class="w3-ul w3-pale-yellow w3-margin-left" style="width:80%">{% for error in form.password2.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+        </p>
+        <p>{{ form.submit(class_="w3-button w3-section w3-blue-grey w3-ripple") }}</p>
+    </form>
+    </div>
+{% endblock %}

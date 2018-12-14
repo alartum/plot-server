@@ -1,0 +1,15 @@
+w3-hide, w3-show .subdir {
+  margin-left: 16px;
+}
+.proj-expand.w3-button{
+  padding:4px 16px 4px 6px;
+  text-align:left;
+}
+
+.close-button.w3-button{
+  padding:2px 8px 2px 8px;
+}
+
+.plot-panel.w3-panel{
+  padding:2px 2px 2px 2px;
+}
