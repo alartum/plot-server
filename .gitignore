@@ -1,3 +1,6 @@
+# Server files
+protected/
+
 # VSCode
 .vscode
 *.db
