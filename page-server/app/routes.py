@@ -1,6 +1,6 @@
 from app import app, db
 import os
-from flask import render_template, flash, redirect, url_for, request, jsonify
+from flask import render_template, flash, redirect, url_for, request, jsonify, send_file
 from app.forms import LoginForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User
@@ -61,3 +61,10 @@ def list_files(project):
     for filename in sorted(os.listdir(directory)):
         files.append(filename)
     return jsonify(files)
+
+@app.route('/get-data/<path:data_path>', methods=['GET'])
+@login_required
+def get_data(data_path):
+    path = app.root_path + "/protected/" + current_user.username + "/" + data_path; 
+    
+    return send_file(path)

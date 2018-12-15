@@ -1,40 +1,55 @@
-function build_chart(canvas) {
-    return new Chart(canvas, {
-        type: 'bar',
-        data: {
-            labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-            datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255,99,132,1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero:true
-                    }
-                }]
-            }
+function build_chart(canvas, plot_path) {
+    const url = location.origin + "/get-data/" + plot_path;
+    
+    fetch(url)
+    .then((resp) => resp.text())
+    .then(function(data) {
+        const dots = []
+        list = data.split(/\r?\n/);
+        for (var i = 0; i < list.length; i++){
+            const vs = list[i].match(/[^ ]+/g).map(Number);
+            const p = {}
+            p.x = vs[0];
+            p.y = vs[1];
+            dots.push(p);
         }
-    });
+        console.log(dots);
+        return new Chart(canvas, {
+            type: 'scatter',
+            data: {
+                labels: ["Test"],
+                datasets: [{
+                    label: ["Test"],
+                    data: dots,
+                    showLine: true, 
+                    borderColor: "rgba(255, 193, 7, 0.8)",
+                    borderWidth: 1, 
+                    backgroundColor: "rgba(255, 193, 7, 0.05)"
+                }],
+            },
+            options: {
+                responsive: true,
+                legend: {
+                    display: false
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: false
+                        }
+                    }],
+                    xAxes: [{
+                        ticks: {
+                            beginAtZero: false
+                        }
+                    }]
+                }
+            }
+        });
+    })
+    .catch(function(error) {
+        console.log(error);
+    }); 
 }
 
 function show_hide(evt){
@@ -107,7 +122,7 @@ function add_plot(plot_path, subdir){
     
     header.innerHTML = plot_path;
     card.parent_display = plotDisplay;
-    build_chart(canvas);
+    build_chart(canvas, plot_path);
     close.addEventListener('click', () => remove_card(card, plot_path));
     plotDisplay.appendChild(card);
 }
