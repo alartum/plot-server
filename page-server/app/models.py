@@ -6,9 +6,9 @@ from app import login
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), index=True, unique=True)
-    email = db.Column(db.String(120), index=True, unique=True)
-    password_hash = db.Column(db.String(128))
+    username = db.Column(db.String(64), index=True, unique=True, nullable=False)
+    email = db.Column(db.String(120), index=True, unique=True, nullable=False)
+    password_hash = db.Column(db.String(128), nullable=False)
     projects = db.relationship('Project', backref='owner', lazy='dynamic')
 
     def __repr__(self):
@@ -26,10 +26,10 @@ def load_user(id):
 
 class Project(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120))
-    last_update = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    frames_saved = db.Column(db.Integer, index=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    name = db.Column(db.String(120), nullable=False)
+    last_update = db.Column(db.DateTime, index=True, default=datetime.utcnow, nullable=False)
+    frames_saved = db.Column(db.Integer, index=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
         return '<Project {} ({})>'.format(self.name, self.last_update)

@@ -11,7 +11,8 @@ from werkzeug.urls import url_parse
 @app.route('/index')
 @login_required
 def index():
-    directory = os.path.join(app.config["PROTECTED_FOLDER"], current_user.username)
+    directory = os.path.normpath(os.path.join(app.config["PROTECTED_FOLDER"], current_user.username))
+    
     projects=[]
     for filename in sorted(os.listdir(directory)):
         projects.append({"name": filename})
@@ -66,5 +67,6 @@ def list_files(project):
 @app.route('/get-data/<path:data_path>', methods=['GET'])
 @login_required
 def get_data(data_path):
+
     path = os.path.join(app.config["PROTECTED_FOLDER"], current_user.username, data_path); 
     return send_file(path)
