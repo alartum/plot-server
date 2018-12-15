@@ -11,14 +11,14 @@ from werkzeug.urls import url_parse
 @app.route('/index')
 @login_required
 def index():
-    directory = app.root_path + "/protected/" + current_user.username
+    directory = os.path.join(app.config["PROTECTED_FOLDER"], current_user.username)
     projects=[]
     for filename in sorted(os.listdir(directory)):
         projects.append({"name": filename})
     return render_template('index.html', projects=projects)
 
 @app.route('/login', methods=['GET', 'POST'])
-def login():
+def login(): 
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = LoginForm()
@@ -56,7 +56,8 @@ def register():
 @app.route('/list-files/<path:project>', methods=['GET'])
 @login_required
 def list_files(project):
-    directory = app.root_path + "/protected/" + current_user.username + "/" + project
+    directory = os.path.join(app.config["PROTECTED_FOLDER"], current_user.username, project)
+    print(directory)
     files=[]
     for filename in sorted(os.listdir(directory)):
         files.append(filename)
@@ -65,6 +66,5 @@ def list_files(project):
 @app.route('/get-data/<path:data_path>', methods=['GET'])
 @login_required
 def get_data(data_path):
-    path = app.root_path + "/protected/" + current_user.username + "/" + data_path; 
-    
+    path = os.path.join(app.config["PROTECTED_FOLDER"], current_user.username, data_path); 
     return send_file(path)

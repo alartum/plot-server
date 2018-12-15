@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <script src="static/js/Chart.js"></script>
-    <script src="static/js/index_defs.js"></script>
+    <script src="{{ url_for('static', filename='js/Chart.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/index_defs.js') }}"></script>
 
     {% include '_plot-card.html' %}
     <div class="w3-cell-row">
