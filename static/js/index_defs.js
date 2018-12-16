@@ -4,9 +4,10 @@ function build_chart(canvas, plot_path) {
     fetch(url)
     .then((resp) => resp.text())
     .then(function(data) {
-        const dots = []
+        const dots = [];
         list = data.split(/\r?\n/);
         for (var i = 0; i < list.length; i++){
+            if (!list[i]) continue;
             const vs = list[i].match(/[^ ]+/g).map(Number);
             const p = {}
             p.x = vs[0];
