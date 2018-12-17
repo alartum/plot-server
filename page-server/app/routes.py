@@ -22,7 +22,7 @@ def login():
         return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
+        user = User.query.filter_by(username=form.username.data).one()
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
             return redirect(url_for('login'))
@@ -91,24 +91,91 @@ def unsubscribe(project_name, file_name):
 
 from cryptography.fernet import Fernet
 import json
-@app.route('/api/upload/<string:mode>', methods=['POST'])
-def upload(mode):
+from sqlalchemy.orm.exc import NoResultFound
+@app.route('/api/prepare/<string:mode>', methods=['POST'])
+def prepare(mode):
+    if mode == "append":
+        fmode = "a"
+    elif mode == "refresh":
+        fmode = "w"
+    else:
+        return "Wrong mode specifier"
+
     # Get data as strings
     data = json.loads(request.data.decode('utf-8'))
     username = data['user']
+    user = db.session.query(User).filter_by(username=username).scalar()
+    if not user:
+        return "User can't be found"
     raw = data['raw'].encode('utf-8')
-    key = db.session.query(User.key).filter_by(username=username).one()[0]
+    key = user.key
     encoder = Fernet(key)
     # Check credentials
     raw = encoder.decrypt(raw).decode('utf-8')
-    if raw.startswith(username):
+
+    if not raw.startswith(username):
+        return "Auth error"
+    else:
         raw = raw[len(username):]
         info = json.loads(raw)
-        print(info)
-        # for file, values in info.items():
-            
-        #     with open 
+        
+        # Create project if doesn't exist
+        project_name = info[0]
+        pr = user.projects.filter_by(name=project_name).scalar()
+        if not pr:
+            pr = Project(name=project_name, user_id=user.id)
+            db.session.add(pr)
 
-        return "Uploaded"
-    else:
+        file_names = info[1]
+        bad_files = pr.files.filter(~File.name.in_(file_names)).all()
+        for file in bad_files:
+            path = file.get_path()
+            if os.path.exists(path):
+                os.remove(path)
+            db.session.delete(file)    
+        
+        for fname in file_names:
+            file = pr.files.filter_by(name=fname).scalar()
+            if not file:
+                file = File(name=fname, project_id=pr.id)
+                db.session.add(file)
+            open(file.get_path(), fmode).close()
+        db.session.commit()
+        return "Project is ready for work"
+
+@app.route('/api/upload', methods=['POST'])
+def upload():
+    # Get data as strings
+    data = json.loads(request.data.decode('utf-8'))
+    username = data['user']
+    user = db.session.query(User).filter_by(username=username).scalar()
+    if not user:
+        return "User can't be found"
+    raw = data['raw'].encode('utf-8')
+    key = user.key
+    encoder = Fernet(key)
+    # Check credentials
+    raw = encoder.decrypt(raw).decode('utf-8')
+
+    if not raw.startswith(username):
         return "Auth error"
+    else:
+        raw = raw[len(username):]
+        info = json.loads(raw)
+        
+        # Create project if doesn't exist
+        project_name = info[0]
+        pr = user.projects.filter_by(name=project_name).scalar()
+        if not pr:
+            return "Project is not found. Prepare it first."
+
+        frames = info[1]
+        state = ""
+        for fname, values in frames.items():
+            file = pr.files.filter_by(name=fname).scalar()
+            if not file:
+                state += "File {} is not found.\n".format(fname)
+            else:
+                with open(file.get_path(), "a") as f:
+                    f.write(', '.join(map(str, values)) + '\n')
+        return state + "Frames successfully added."
