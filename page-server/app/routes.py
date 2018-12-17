@@ -54,9 +54,8 @@ def register():
 @app.route('/list-files/<string:project_name>', methods=['GET'])
 @login_required
 def list_files(project_name):
-    project = Project.query.filter(and_(Project.user_id==current_user.id, Project.name==project_name)).one()
-    files = File.query.filter_by(project_id=project.id).all()
-    file_names = [f.name for f in files]
+    files = db.session.query(File.name).select_from(File, Project).filter(Project.user_id==current_user.id, Project.name==project_name).all()
+    file_names = [f[0] for f in files]
     return jsonify(file_names)
 
 @app.route('/get-data/<string:project_name>/<path:file_name>', methods=['GET'])
