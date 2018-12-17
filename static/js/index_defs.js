@@ -1,3 +1,11 @@
+var socket = io.connect(location.origin);
+socket.on('connect', function() {
+    socket.emit('my event', {data: 'Connected!'});
+});
+socket.on('message', function(data) {
+    console.log(data, "PONG!");
+});
+
 function build_chart(canvas, plot_path) {
     const url = location.origin + "/get-data/" + plot_path;
     
@@ -14,7 +22,6 @@ function build_chart(canvas, plot_path) {
             p.y = vs[1];
             dots.push(p);
         }
-        console.log(dots);
         return new Chart(canvas, {
             type: 'scatter',
             data: {

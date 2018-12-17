@@ -2,25 +2,26 @@
 <html>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <script>const current_user = "{{current_user.username}}";</script>
     <head>
       {% if title %}
       <title>{{ title }} - Plot-Server</title>
       {% else %}
-      <title>Welcome to Plot-Server</title>
+      <title>Plot-Server</title>
       {% endif %}
     </head>
     <body>
-        <div class="w3-container w3-blue-gray">
-            <h3><b>Plot-Server</b></h3>
-            <a href="{{ url_for('index') }}">Home</a>
+        <div class="w3-blue-gray w3-bar">
+            <h3 class="w3-header"><b>Plot-Server</b></h3>
+            <a href="{{ url_for('index') }}" class="w3-bar-item">Home</a>
             {% if current_user.is_anonymous %}
-            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('login') }}" class="w3-bar-item">Login</a>
             {% else %}
-            <a href="{{ url_for('logout') }}">Logout</a>
-            ({{ current_user.username }})
+            <a href="{{ url_for('logout') }}" class="w3-bar-item">Logout</a>
+            <div class="w3-bar-item">Hello, {{ current_user.username }}! Your API key is below:</div>
             {% endif %}
         </div>
+        {% if not current_user.is_anonymous %}<div class="w3-border w3-round-large w3-center">{{ key }}</div>
+        {% endif %}
         {% with messages = get_flashed_messages() %}
         {% if messages %}
         <ul>
