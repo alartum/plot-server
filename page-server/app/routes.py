@@ -159,7 +159,7 @@ def upload():
                 with open(file.get_path(), "a") as f:
                     f.write(str_values  + '\n')
                 # And emit new data
-                print(">>   EMIT: ", project_name + "/" + fname, str_values, "file:"+str(file.id))
+                # print(">>   EMIT: ", project_name + "/" + fname, str_values, "file:"+str(file.id))
                 socketio.emit(project_name + "/" + fname, str_values, room="file:"+str(file.id), namespace="/files")
         return state + "Frames successfully added."
 
