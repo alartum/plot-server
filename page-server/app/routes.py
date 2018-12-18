@@ -15,7 +15,11 @@ def index():
     projects = Project.query.filter_by(user_id=current_user.id).all()
     project_names = [p.name for p in projects]
     key = db.session.query(User.key).filter_by(id=current_user.id).scalar()
-    key = key.decode('utf-8')
+    if key:
+        key = key.decode('utf-8')
+    else:
+        key = ""
+
     return render_template('index.html', project_names=project_names, key=key)
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -48,6 +52,7 @@ def register():
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
+        user.generate_key()
         db.session.add(user)
         db.session.commit()
         flash('Congratulations, you are now a registered user!')
