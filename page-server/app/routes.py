@@ -6,6 +6,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Project, File
 from app.forms import RegistrationForm
 from werkzeug.urls import url_parse
+from sqlalchemy.sql.expression import join
 
 @app.route('/')
 @app.route('/index')
@@ -56,14 +57,14 @@ def register():
 @app.route('/list-files/<string:project_name>', methods=['GET'])
 @login_required
 def list_files(project_name):
-    files = db.session.query(File.name).select_from(File, Project).filter(Project.user_id==current_user.id, Project.name==project_name).all()
+    files = db.session.query(File.name).select_from(join(File, Project)).filter(Project.user_id==current_user.id, Project.name==project_name).all()
     file_names = [f[0] for f in files]
     return jsonify(file_names)
 
 @app.route('/get-data/<string:project_name>/<path:file_name>', methods=['GET'])
 @login_required
 def get_data(project_name, file_name):
-    file = db.session.query(File).select_from(File, Project).filter(File.name==file_name, Project.name==project_name, Project.user_id==current_user.id).one()
+    file = db.session.query(File).select_from(join(File, Project)).filter(File.name==file_name, Project.name==project_name, Project.user_id==current_user.id).one()
 
     return send_file(file.get_path())
 
@@ -179,7 +180,7 @@ from flask_socketio import send, emit, join_room, leave_room
 def subscribe(path):
     path = str(path)
     project_name, file_name = path.split('/', 1)
-    file_id = db.session.query(File.id).select_from(File, Project).filter(File.name==file_name, Project.name==project_name, Project.user_id==current_user.id).scalar()
+    file_id = db.session.query(File.id).select_from(join(File, Project)).filter(File.name==file_name, Project.name==project_name, Project.user_id==current_user.id).scalar()
     if file_id:
         join_room("file:"+str(file_id), namespace="/files")
         print('>User {} subscribed to {} ({})'.format(current_user.username, path, "file:"+str(file_id)))
@@ -189,7 +190,7 @@ def subscribe(path):
 def unsubscribe(path):
     path = str(path)
     project_name, file_name = path.split('/', 1)
-    file_id = db.session.query(File.id).select_from(File, Project).filter(File.name==file_name, Project.name==project_name, Project.user_id==current_user.id).scalar()
+    file_id = db.session.query(File.id).select_from(join(File, Project)).filter(File.name==file_name, Project.name==project_name, Project.user_id==current_user.id).scalar()
     if file_id:
         leave_room("file:"+str(file_id), namespace="/files")
         print('>User {} unsubscribed from {} ({})'.format(current_user.username, path, "file:"+str(file_id)))
