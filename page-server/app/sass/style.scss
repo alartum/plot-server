@@ -1,6 +1,5 @@
 @import "_w3";
 
-
 .project-selector {
   @extend .w3-cell;
   @extend .w3-card;
@@ -38,10 +37,32 @@
 
 .close-button {
   @extend .w3-bar-item;
-  @extend .w3-right;
   @extend .w3-button; 
+  @extend .w3-right;
 
-  padding:2px 8px 2px 8px;
+}
+
+.sync-button {
+  @extend .w3-bar-item;
+  @extend .w3-button; 
+  @extend .w3-right;
+
+  position: relative;
+  min-height: 40px;
+  min-width: 56px;
+}
+
+.sync-button img {
+  position: absolute;
+  top: 8px;
+  left: 16px;
+  width: 24px;
+  height: 24px;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.sync-button img.transparent {
+  opacity: 0;
 }
 
 .plot-card {

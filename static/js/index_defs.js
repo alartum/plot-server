@@ -1,22 +1,17 @@
-var socket = io.connect(location.origin);
-socket.on('connect', function() {
-    socket.emit('my event', {data: 'Connected!'});
-});
-socket.on('message', function(data) {
-    console.log(data, "PONG!");
-});
+var socket = io.connect();
+var file_socket = io.connect("/files");
+var charts;
 
 function build_chart(canvas, plot_path) {
     const url = location.origin + "/get-data/" + plot_path;
-    
-    fetch(url)
+    return fetch(url)
     .then((resp) => resp.text())
     .then(function(data) {
         const dots = [];
         list = data.split(/\r?\n/);
         for (var i = 0; i < list.length; i++){
             if (!list[i]) continue;
-            const vs = list[i].match(/[^ ]+/g).map(Number);
+            const vs = list[i].match(/[^\s,]+/g).map(Number);
             const p = {}
             p.x = vs[0];
             p.y = vs[1];
@@ -25,9 +20,9 @@ function build_chart(canvas, plot_path) {
         return new Chart(canvas, {
             type: 'scatter',
             data: {
-                labels: ["Test"],
+                labels: [],
                 datasets: [{
-                    label: ["Test"],
+                    label: [],
                     data: dots,
                     showLine: true, 
                     borderColor: "rgba(255, 193, 7, 0.8)",
@@ -98,22 +93,51 @@ function show_hide(evt){
     } else {
         filesList.className = filesList.className.replace(" w3-show", "");
     }
-    
+
 }
 
-function remove_card(card, plot_path){
+function remove_card(card, plot_path, tmp_func){
+    file_socket.removeListener(plot_path, tmp_func);
     const dirs = document.querySelectorAll(".proj-expand");
     for (const d of dirs){
         if (plot_path.startsWith(d.innerHTML)){
             const subdirs = d.nextElementSibling.querySelectorAll(".subdir");
             for (const s of subdirs){
-                if (plot_path.endsWith(s.innerHTML) && s.className.indexOf("opened") != -1){
-                    s.className = s.className.replace(" opened", "");
-                }
+                s.classList.remove("opened")
             }
         }
     } 
     card.parent_display.removeChild(card)
+}
+
+function handle_sync(sync, path) {
+    const nosync = sync.querySelector(".no-sync");
+    sync.classList.toggle('sync');
+    if (sync.classList.contains('sync')){
+        console.log("Synced");
+        nosync.classList.add("transparent");
+        socket.emit('subscribe', path);
+        
+    } else {
+        console.log("Not synced")
+        nosync.classList.remove("transparent");
+        socket.emit('unsubscribe', path);
+    } 
+}
+
+async function append_points(chart, points){
+    const vs = points.match(/[^\s,]+/g).map(Number);
+    const p = {};
+    p.x = vs[0];
+    p.y = vs[1];
+    chart
+    .then( (tmp) => {
+        tmp.data.datasets[0].data.push(p);
+        tmp.update();
+    })
+    .catch((error) => {
+        console.log(error);
+    });
 }
 
 function add_plot(plot_path, subdir){
@@ -127,10 +151,19 @@ function add_plot(plot_path, subdir){
     const header = card.querySelector(".card-header");
     const canvas = card.querySelector(".plot");
     const close = card.querySelector(".close-button");
-    
+    const sync = card.querySelector(".sync-button");
+
     header.innerHTML = plot_path;
     card.parent_display = plotDisplay;
-    build_chart(canvas, plot_path);
-    close.addEventListener('click', () => remove_card(card, plot_path));
+    const chart = build_chart(canvas, plot_path);
+    console.log("Chart", chart);
+    function tmp_func(points){
+        console.log(points);
+        append_points(chart, points);
+    }
+    console.log("Added listener:", plot_path);
+    file_socket.on(plot_path, tmp_func);
+    close.addEventListener('click', () => remove_card(card, plot_path, tmp_func));
+    sync.addEventListener('click', () => handle_sync(sync, plot_path));
     plotDisplay.appendChild(card);
 }

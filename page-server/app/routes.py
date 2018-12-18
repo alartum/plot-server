@@ -13,8 +13,9 @@ from werkzeug.urls import url_parse
 def index():
     projects = Project.query.filter_by(user_id=current_user.id).all()
     project_names = [p.name for p in projects]
-    key = db.session.query(User.key).filter_by(id=current_user.id).one()
-    return render_template('index.html', project_names=project_names, key=key[0])
+    key = db.session.query(User.key).filter_by(id=current_user.id).scalar()
+    key = key.decode('utf-8')
+    return render_template('index.html', project_names=project_names, key=key)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login(): 
@@ -66,32 +67,8 @@ def get_data(project_name, file_name):
 
     return send_file(file.get_path())
 
-
-from flask_socketio import send, emit, join_room, leave_room
-@socketio.on('my event')
-@login_required
-def handle_my_custom_event(json):
-    print(current_user)
-    print('received json: ' + str(json))
-    send(json)
-
-@app.route('/subscribe/<string:project_name>/<path:file_name>', methods=['GET'])
-@login_required
-def subscribe(project_name, file_name):
-    file_id = db.session.query(File.id).select_from(File, Project).filter(File.name==file_name, Project.name==project_name, Project.user_id==current_user.id).one()
-    join_room(str(file_id), namespace="/files")
-    return "You've been subscribed!"
-
-@app.route('/unsubscribe/<string:project_name>/<path:file_name>', methods=['GET'])
-@login_required
-def unsubscribe(project_name, file_name):
-    file_id = db.session.query(File.id).select_from(File, Project).filter(File.name==file_name, Project.name==project_name, Project.user_id==current_user.id).one()
-    leave_room(str(file_id), namespace="/files")
-    return "You've been unsubscribed!"
-
 from cryptography.fernet import Fernet
 import json
-from sqlalchemy.orm.exc import NoResultFound
 @app.route('/api/prepare/<string:mode>', methods=['POST'])
 def prepare(mode):
     if mode == "append":
@@ -176,6 +153,43 @@ def upload():
             if not file:
                 state += "File {} is not found.\n".format(fname)
             else:
+                # Write to file
+                str_values = ', '.join(map(str, values))
                 with open(file.get_path(), "a") as f:
-                    f.write(', '.join(map(str, values)) + '\n')
+                    f.write(str_values  + '\n')
+                # And emit new data
+                print(">>   EMIT: ", project_name + "/" + fname, str_values, "file:"+str(file.id))
+                socketio.emit(project_name + "/" + fname, str_values, room="file:"+str(file.id), namespace="/files")
         return state + "Frames successfully added."
+
+import functools
+from flask_socketio import disconnect
+def authenticated_only(f):
+    @functools.wraps(f)
+    def wrapped(*args, **kwargs):
+        if not current_user.is_authenticated:
+            disconnect()
+        else:
+            return f(*args, **kwargs)
+    return wrapped
+
+from flask_socketio import send, emit, join_room, leave_room
+@socketio.on('subscribe')
+@authenticated_only
+def subscribe(path):
+    path = str(path)
+    project_name, file_name = path.split('/', 1)
+    file_id = db.session.query(File.id).select_from(File, Project).filter(File.name==file_name, Project.name==project_name, Project.user_id==current_user.id).scalar()
+    if file_id:
+        join_room("file:"+str(file_id), namespace="/files")
+        print('>User {} subscribed to {} ({})'.format(current_user.username, path, "file:"+str(file_id)))
+
+@socketio.on('unsubscribe')
+@authenticated_only
+def unsubscribe(path):
+    path = str(path)
+    project_name, file_name = path.split('/', 1)
+    file_id = db.session.query(File.id).select_from(File, Project).filter(File.name==file_name, Project.name==project_name, Project.user_id==current_user.id).scalar()
+    if file_id:
+        leave_room("file:"+str(file_id), namespace="/files")
+        print('>User {} unsubscribed from {} ({})'.format(current_user.username, path, "file:"+str(file_id)))
