@@ -8,10 +8,25 @@ from app.forms import RegistrationForm
 from werkzeug.urls import url_parse
 from sqlalchemy.sql.expression import join
 
+
+@app.after_request
+def http_to_https(response):
+    print("<< RESPONSE [START] >>")
+    print(response.status)
+    print(response.headers)
+    print(response.get_data())
+    print("<< RESPONSE [END] >>")
+    # response.location = response.location.replace("http://", "https://")
+    return response
+
 @app.route('/')
 @app.route('/index')
-@login_required
 def index():
+    return render_template('index.html')
+
+@app.route('/home')
+@login_required
+def home():
     projects = Project.query.filter_by(user_id=current_user.id).all()
     project_names = [p.name for p in projects]
     key = db.session.query(User.key).filter_by(id=current_user.id).scalar()
@@ -20,12 +35,12 @@ def index():
     else:
         key = ""
 
-    return render_template('index.html', project_names=project_names, key=key)
+    return render_template('home.html', project_names=project_names, key=key)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login(): 
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('home'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).one()
@@ -59,11 +74,20 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
+from functools import wraps
+def print_url(func):
+    @wraps(func)
+    def decorated(*args, **kwargs):
+        print(request.url_root)
+        return func(*args, **kwargs)
+    return decorated
+
 @app.route('/list-files/<string:project_name>', methods=['GET'])
 @login_required
 def list_files(project_name):
     files = db.session.query(File.name).select_from(join(File, Project)).filter(Project.user_id==current_user.id, Project.name==project_name).all()
     file_names = [f[0] for f in files]
+
     return jsonify(file_names)
 
 @app.route('/get-data/<string:project_name>/<path:file_name>', methods=['GET'])

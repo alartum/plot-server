@@ -10,18 +10,28 @@
       {% endif %}
     </head>
     <body>
-        <div class="w3-blue-gray w3-bar">
-            <h3 class="w3-header"><b>PlotServer</b></h3>
-            <a href="{{ url_for('index') }}" class="w3-bar-item">Home</a>
+        <div class="flex-container" style="display: flex; align-items: center; flex-wrap: wrap;">
+            <div style="">
+                <img src="static/img/logo.svg" style="height: 100%; width: 100%;">
+            </div>
+            <div>
+                <h2><b>Plot<br>Server</b></h2>
+            </div>
+            <div style="flex-grow: 2; flex-shrink: 2;">
+            </div>
             {% if current_user.is_anonymous %}
-            <a href="{{ url_for('login') }}" class="w3-bar-item">Login</a>
+            <div>
+                <a href="{{ url_for('login') }}" class="">Login</a>
+            </div>
             {% else %}
-            <a href="{{ url_for('logout') }}" class="w3-bar-item">Logout</a>
-            <div class="w3-bar-item">Hello, {{ current_user.username }}! Your API key is below:</div>
+            <div style="text-align: center;">
+                <a href="{{ url_for('home') }}" class="">Home</a>
+            </div>
+            <div>
+                <a href="{{ url_for('logout') }}" class="">Logout</a>
+            </div>
             {% endif %}
         </div>
-        {% if not current_user.is_anonymous %}<div class="w3-border w3-round-large w3-center">{{ key }}</div>
-        {% endif %}
         {% with messages = get_flashed_messages() %}
         {% if messages %}
         <ul>

@@ -59,7 +59,9 @@ function show_hide(evt){
     const filesList = evt.currentTarget.nextElementSibling;
     const projName = evt.currentTarget.innerHTML;
     const url = location.origin + "/list-files/" + projName;
+    console.log(url)
 
+    socket.emit("list-files", projName);
     if (filesList.className.indexOf("w3-show") == -1){
         fetch(url)
         .then((resp) => resp.json())
@@ -76,8 +78,8 @@ function show_hide(evt){
                 const plot_path = projName + "/" + file;
                 subdir.addEventListener('click', () => add_plot(plot_path, subdir));
                 const headers = document.querySelectorAll(".card-header");
-                for (const header of headers){
-                    if (header.innerHTML == plot_path){
+                for (let i = 0; i < headers.length; i++){
+                    if (headers[i].innerHTML == plot_path){
                         subdir.className += " opened";
                         break;
                     }
@@ -114,12 +116,10 @@ function handle_sync(sync, path) {
     const nosync = sync.querySelector(".no-sync");
     sync.classList.toggle('sync');
     if (sync.classList.contains('sync')){
-        console.log("Synced");
         nosync.classList.add("transparent");
         socket.emit('subscribe', path);
         
     } else {
-        console.log("Not synced")
         nosync.classList.remove("transparent");
         socket.emit('unsubscribe', path);
     } 
@@ -156,12 +156,9 @@ function add_plot(plot_path, subdir){
     header.innerHTML = plot_path;
     card.parent_display = plotDisplay;
     const chart = build_chart(canvas, plot_path);
-    console.log("Chart", chart);
     function tmp_func(points){
-        console.log(points);
         append_points(chart, points);
     }
-    console.log("Added listener:", plot_path);
     file_socket.on(plot_path, tmp_func);
     close.addEventListener('click', () => remove_card(card, plot_path, tmp_func));
     sync.addEventListener('click', () => handle_sync(sync, plot_path));

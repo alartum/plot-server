@@ -15,6 +15,21 @@
   text-align:left;
 }
 
+.hidekey {
+  display: none;
+}
+
+#keyButton {
+  @extend .w3-card;
+  background-color: honeydew;
+  text-align: center;
+  cursor:pointer;
+}
+
+#keyButton:hover {
+  background-color: lightgray;
+}
+
 .subdir {
   @extend .w3-button;
   @extend .w3-block;
