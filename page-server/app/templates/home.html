@@ -6,11 +6,12 @@
     <script src="static/js/home_defs.js"></script>
 
     {% include '_plot-card.html' %}
-    <div class="w3-container">Hello, {{ current_user.username }}! Your API key is below:</div> 
+    <div class="key-block"><span>Hello, <b>{{ current_user.username }}</b>! Your API key is below:</span>
     <div id="keyButton">Show Key</div>
     {% if not current_user.is_anonymous %}<div id="key" class="key-container hidekey">{{ key }}</div>
+    </div> 
         {% endif %}
-    <div class="w3-cell-row">
+    <div class="flex-container">
         <div class="project-selector">
             <header class="w3-container"><h6><b>PROJECTS</b></h6></header>
             {% for project_name in project_names %}

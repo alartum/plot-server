@@ -22,9 +22,9 @@ def http_to_https(response):
     return response
 
 @app.route('/')
-@app.route('/index')
-def index():
-    return render_template('index.html')
+@app.route('/about')
+def about():
+    return render_template('about.html')
 
 @app.route('/home')
 @login_required
@@ -59,12 +59,12 @@ def login():
 @app.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('about'))
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('about'))
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User(username=form.username.data)#, email=form.email.data)

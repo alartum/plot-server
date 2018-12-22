@@ -18,7 +18,12 @@ body {
 }
 
 .about-card {
-  @extend .w3-card;
+  box-shadow:0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);
+  
+  display: flex; 
+  align-items: center;
+  justify-content: space-between;
+  flex-flow: column;
   margin: 0.3em;
   padding: 0.2em;
   max-width: 40em;
@@ -38,6 +43,7 @@ body {
   @extend .flex-block;
   flex-wrap: wrap;
   background: linear-gradient(#e6e6ff, #ffffff);
+  width: 100%;
 }
 
 .key-container {
@@ -83,7 +89,7 @@ body {
 
 #keyButton {
   @extend .w3-card;
-  background-color: honeydew;
+  background-color: #e0ebeb;
   text-align: center;
   cursor:pointer;
 }
@@ -142,6 +148,12 @@ body {
   opacity: 0;
 }
 
+.img-container {
+  padding: 0.5em;
+  flex-grow: 2;
+  display: flex;
+}
+
 .plot-card {
   @extend .w3-margin;
   @extend .w3-card;
@@ -160,6 +172,43 @@ body {
 .code-preview {
   background-color: #e0ebeb;
   border-radius: 0.5em;
+  margin: 0.4em;
   padding: 0.2em;
   font-size: 0.9em;
+}
+
+.form-container {
+  @extend .w3-container;
+  @extend .w3-card-4;
+}
+
+.footer {
+  text-align: center;
+  padding: 1em;
+}
+
+.flex-column {
+  display: flex; 
+  align-items: center;
+  justify-content: flex-start;
+  flex-flow: column;
+  width: 100vw;
+  height: 100vh;
+}
+
+.key-block {
+  padding-bottom: 1em;
+  text-align: center;
+  width: 100vw;
+}
+
+.wide-ruler {
+  width: 100%;
+}
+
+.flex-row {
+  display: flex; 
+  align-items: center;
+  justify-content: space-between;
+  flex-flow: row;
 }

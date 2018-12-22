@@ -67,7 +67,7 @@ function show_hide(evt){
     const projName = evt.currentTarget.innerHTML;
     const url = location.origin + "/list-files/" + projName;
 ;
-    if (filesList.className.indexOf("w3-show") == -1){
+    if (!filesList.classList.contains("w3-show")){
         fetch(url)
         .then((resp) => resp.json())
         .then(function(files) {
@@ -95,12 +95,9 @@ function show_hide(evt){
         })
         .catch(function(error) {
             console.log(error);
-        });   
-        filesList.className += " w3-show";
-    } else {
-        filesList.className = filesList.className.replace(" w3-show", "");
+        });
     }
-
+    filesList.classList.toggle("w3-show");
 }
 
 function remove_card(card, plot_path, tmp_func){
@@ -146,10 +143,10 @@ async function append_points(chart, points){
 }
 
 function add_plot(plot_path, subdir){
-    if (subdir.className.indexOf("opened") != -1){
+    if (subdir.classList.contains("opened")){
         return;
     }
-    subdir.className += " opened";
+    subdir.classList.add("opened");
     const plotDisplay = document.querySelector("#plot-display");
     const plotCard = document.querySelector("#plot-card-tmpl").content.querySelector(".plot-card");
     const card = document.importNode(plotCard, true);

@@ -10,6 +10,7 @@
       {% endif %}
     </head>
     <body>
+        <div class="flex-column">
         <div class="head-bar">
             <div class="flex-block">
             <div>
@@ -22,7 +23,7 @@
             <div class="expander">
             </div>
             <div class="flex-block">
-            <a href="{{ url_for('index') }}" class="shadow-button">About</a>
+            <a href="{{ url_for('about') }}" class="shadow-button">About</a>
             {% if current_user.is_anonymous %}
                 <a href="{{ url_for('login') }}" class="shadow-button">Login</a>
                 <a href="{{ url_for('register') }}" class="shadow-button">Register</a>
@@ -32,16 +33,25 @@
             {% endif %}
             </div>
         </div>
-        <hr>
+        <div class="wide-ruler"><hr></div>
         {% with messages = get_flashed_messages() %}
         {% if messages %}
+        <div>
         <ul>
             {% for message in messages %}
             <li>{{ message }}</li>
             {% endfor %}
         </ul>
+        </div>
+        <div class="wide-ruler"><hr></div>
         {% endif %}
         {% endwith %}
+        <div>
         {% block content %}{% endblock %}
+        </div>
+        <div class="expander"></div>
+        <div class="wide-ruler"><hr></div>
+        <div class="footer">
+        Icons made by <a href="https://www.freepik.com/" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/"	    title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" 			    title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
     </body>
 </html>
