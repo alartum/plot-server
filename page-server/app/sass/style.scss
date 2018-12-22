@@ -156,3 +156,10 @@ body {
   @extend .w3-bar-item;
   @extend .w3-opacity;
 }
+
+.code-preview {
+  background-color: #e0ebeb;
+  border-radius: 0.5em;
+  padding: 0.2em;
+  font-size: 0.9em;
+}

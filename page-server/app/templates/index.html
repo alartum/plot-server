@@ -3,11 +3,26 @@
 {% block content %}
 <div class="card-holder">
 <div class="about-card">
-<h3 class="subheader">PlotServer: track data online</h3>
+<h3 class="subheader">Real-time Data Updates</h3>
 This application allows you to keep an eye on any process without the need to access the remote computer. Just send your data using the <i>PlotServer API</i> and visualize it anywhere. 
 </div>
 <div class="about-card">
-<h3 class="subheader">PlotServer: track data online</h3>
-This application allows you to keep an eye on any process without the need to access the remote computer. Just send your data using the <i>PlotServer API</i> and visualize it anywhere. 
+<h3 class="subheader">Intuitive API</h3>
+The lightweight API alows you to integrate this service into alredy existing project in few minutes. Detailed instructions can be found on <a href="https://github.com/alartum/plot-server-api">GitHub</a>.
+<hr>
+<div class="code-preview">
+<code>
+project = Project("sample_project", api)<br>
+project.add_files(["sample_data"])<br>
+project.prepare_project()<br>
+<br>
+t = 0<br>
+while True:<br>
+&emsp; &emsp;project.add_frame("sample_data", t, 2*t**2 + 0.5*t))<br>
+&emsp; &emsp;project.send_frames()<br>
+&emsp; &emsp;t += 1<br>
+
+</code>
+</div>
 </div>
 {% endblock %}

@@ -9,7 +9,7 @@ from werkzeug.urls import url_parse
 from sqlalchemy.sql.expression import join
 
 
-@app.after_request
+# @app.after_request
 def http_to_https(response):
     if response:
         status = response.status
@@ -52,7 +52,7 @@ def login():
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('index')
+            next_page = url_for('home')
         return redirect(next_page)
     return render_template('login.html', title='Sign In', form=form)
 
@@ -95,8 +95,9 @@ def list_files(project_name):
 @app.route('/get-data/<string:project_name>/<path:file_name>', methods=['GET'])
 @login_required
 def get_data(project_name, file_name):
+    print(">>GET_DATA", project_name, file_name)
     file = db.session.query(File).select_from(join(File, Project)).filter(File.name==file_name, Project.name==project_name, Project.user_id==current_user.id).one()
-
+    print(file)
     return send_file(file.get_path())
 
 from cryptography.fernet import Fernet
