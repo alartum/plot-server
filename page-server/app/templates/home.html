@@ -7,8 +7,8 @@
 
     {% include '_plot-card.html' %}
     <div class="w3-container">Hello, {{ current_user.username }}! Your API key is below:</div> 
-    <div id="keyButton">Hide Key</div>
-    {% if not current_user.is_anonymous %}<div id="key" class="w3-border w3-round-large w3-center">{{ key }}</div>
+    <div id="keyButton">Show Key</div>
+    {% if not current_user.is_anonymous %}<div id="key" class="key-container hidekey">{{ key }}</div>
         {% endif %}
     <div class="w3-cell-row">
         <div class="project-selector">
@@ -31,7 +31,8 @@
     const keyButton = document.querySelector("#keyButton");
     keyButton.addEventListener('click', () => {
         key.classList.toggle("hidekey");
-        console.log("KEY SHOW/HIDE");
+        var text = keyButton.firstChild;
+        text.data = text.data == "Show Key" ? "Hide Key" : "Show Key";
     });
     </script>
 {% endblock %}

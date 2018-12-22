@@ -1,9 +1,71 @@
 @import "_w3";
 
+body {
+  font-size: 1.1em !important;
+  font-family: Arial;
+}
+
 .project-selector {
   @extend .w3-cell;
   @extend .w3-card;
   @extend .w3-quarter;
+}
+
+.card-holder{
+  display: flex; 
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.about-card {
+  @extend .w3-card;
+  margin: 0.3em;
+  padding: 0.2em;
+  max-width: 40em;
+  min-height: 20vh;
+}
+
+.flex-block {
+  display: flex; 
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo-name {
+  text-shadow: 1px 1px;
+}
+.head-bar {
+  @extend .flex-block;
+  flex-wrap: wrap;
+  background: linear-gradient(#e6e6ff, #ffffff);
+}
+
+.key-container {
+  text-align: center;
+}
+
+.expander {
+  flex-grow: 2; 
+  flex-shrink: 2;
+}
+
+.subheader {
+  color:  #293d3d;
+}
+
+.shadow-button {
+  box-shadow:0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);
+  background: #ff944d;
+  padding: 0.5em;
+  margin: 0.5em;
+  box-sizing: border-box;
+  border-radius: 0.5em;
+  text-align: center;
+  text-decoration: none;
+}
+
+.shadow-button:hover {
+  background: #ffb380;
 }
 
 .proj-expand {

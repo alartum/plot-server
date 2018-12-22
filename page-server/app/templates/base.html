@@ -10,28 +10,29 @@
       {% endif %}
     </head>
     <body>
-        <div class="flex-container" style="display: flex; align-items: center; flex-wrap: wrap;">
-            <div style="">
-                <img src="static/img/logo.svg" style="height: 100%; width: 100%;">
-            </div>
+        <div class="head-bar">
+            <div class="flex-block">
             <div>
+                <img src="static/img/logo.svg" style="height: 7em;">
+            </div>
+            <div class="logo-name">
                 <h2><b>Plot<br>Server</b></h2>
             </div>
-            <div style="flex-grow: 2; flex-shrink: 2;">
             </div>
+            <div class="expander">
+            </div>
+            <div class="flex-block">
+            <a href="{{ url_for('index') }}" class="shadow-button">About</a>
             {% if current_user.is_anonymous %}
-            <div>
-                <a href="{{ url_for('login') }}" class="">Login</a>
-            </div>
+                <a href="{{ url_for('login') }}" class="shadow-button">Login</a>
+                <a href="{{ url_for('register') }}" class="shadow-button">Register</a>
             {% else %}
-            <div style="text-align: center;">
-                <a href="{{ url_for('home') }}" class="">Home</a>
-            </div>
-            <div>
-                <a href="{{ url_for('logout') }}" class="">Logout</a>
-            </div>
+                <a href="{{ url_for('home') }}" class="shadow-button">Home</a>
+                <a href="{{ url_for('logout') }}" class="shadow-button">Logout</a>
             {% endif %}
+            </div>
         </div>
+        <hr>
         {% with messages = get_flashed_messages() %}
         {% if messages %}
         <ul>

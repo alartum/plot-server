@@ -11,11 +11,13 @@ from sqlalchemy.sql.expression import join
 
 @app.after_request
 def http_to_https(response):
-    print("<< RESPONSE [START] >>")
-    print(response.status)
-    print(response.headers)
-    print(response.get_data())
-    print("<< RESPONSE [END] >>")
+    if response:
+        status = response.status
+        print("<<[START] RESPONSE {} >>".format(status)) 
+        # print(response.status)
+        print(response.headers)
+        # print(response.get_data())
+        print("<<[END] RESPONSE {} >>".format(status))
     # response.location = response.location.replace("http://", "https://")
     return response
 
@@ -43,7 +45,7 @@ def login():
         return redirect(url_for('home'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).one()
+        user = User.query.filter_by(username=form.username.data).scalar()
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password')
             return redirect(url_for('login'))
@@ -65,12 +67,12 @@ def register():
         return redirect(url_for('index'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data)
+        user = User(username=form.username.data)#, email=form.email.data)
         user.set_password(form.password.data)
         user.generate_key()
         db.session.add(user)
         db.session.commit()
-        flash('Congratulations, you are now a registered user!')
+        flash("You've been successfully registered.")
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 

@@ -2,13 +2,15 @@ var socket = io.connect();
 var file_socket = io.connect("/files");
 var charts;
 
+// function get_
+
 function build_chart(canvas, plot_path) {
     const url = location.origin + "/get-data/" + plot_path;
     return fetch(url)
     .then((resp) => resp.text())
     .then(function(data) {
         const dots = [];
-        list = data.split(/\r?\n/);
+        const list = data.split(/\r?\n/);
         for (var i = 0; i < list.length; i++){
             if (!list[i]) continue;
             const vs = list[i].match(/[^\s,]+/g).map(Number);
