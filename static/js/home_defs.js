@@ -37,6 +37,11 @@ function build_chart(canvas, plot_path) {
                 legend: {
                     display: false
                 },
+                elements: {
+                    point:{
+                        radius: 0
+                    }
+                },
                 scales: {
                     yAxes: [{
                         ticks: {
@@ -61,9 +66,7 @@ function show_hide(evt){
     const filesList = evt.currentTarget.nextElementSibling;
     const projName = evt.currentTarget.innerHTML;
     const url = location.origin + "/list-files/" + projName;
-    console.log(url)
-
-    socket.emit("list-files", projName);
+;
     if (filesList.className.indexOf("w3-show") == -1){
         fetch(url)
         .then((resp) => resp.json())
@@ -114,13 +117,13 @@ function remove_card(card, plot_path, tmp_func){
     card.parent_display.removeChild(card)
 }
 
-function handle_sync(sync, path) {
+function handle_sync(sync, path, canvas) {
     const nosync = sync.querySelector(".no-sync");
     sync.classList.toggle('sync');
     if (sync.classList.contains('sync')){
         nosync.classList.add("transparent");
-        socket.emit('subscribe', path);
-        
+
+        socket.emit('subscribe', path);        
     } else {
         nosync.classList.remove("transparent");
         socket.emit('unsubscribe', path);
@@ -163,6 +166,6 @@ function add_plot(plot_path, subdir){
     }
     file_socket.on(plot_path, tmp_func);
     close.addEventListener('click', () => remove_card(card, plot_path, tmp_func));
-    sync.addEventListener('click', () => handle_sync(sync, plot_path));
+    sync.addEventListener('click', () => handle_sync(sync, plot_path, canvas));
     plotDisplay.appendChild(card);
 }

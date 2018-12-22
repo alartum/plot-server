@@ -95,7 +95,6 @@ def list_files(project_name):
 @app.route('/get-data/<string:project_name>/<path:file_name>', methods=['GET'])
 @login_required
 def get_data(project_name, file_name):
-    print(">>GET_DATA", project_name, file_name)
     file = db.session.query(File).select_from(join(File, Project)).filter(File.name==file_name, Project.name==project_name, Project.user_id==current_user.id).one()
     print(file)
     return send_file(file.get_path())
