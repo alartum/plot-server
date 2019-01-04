@@ -1,6 +1,10 @@
 # PlotServer
 A Flask application that provides plot viewing in web browser and API for data uploading.
 
+About page             |  Main screen
+:-------------------------:|:-------------------------:
+![Screen 1](https://github.com/alartum/plotserver/raw/master/screen1.png)|![Screen 2](https://github.com/alartum/plotserver/raw/master/screen2.png)
+
 ## Building
 
 Initial setup can be done by (if appropriate version of _virtualenv_ is not installed, you will be informed):
